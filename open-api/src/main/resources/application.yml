@@ -1,0 +1,65 @@
+server:
+  port: 7128
+  tomcat:
+    uri-encoding: UTF-8
+    threads:
+      max: 500
+      min-spare: 50
+    accesslog:
+      enabled: true
+      directory: ./logs/
+    basedir: ./
+
+spring:
+  application:
+    name: bhex-broker-openapi
+  messages:
+    basename: i18n.messages,i18n.business_subject
+    encoding: UTF-8
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  redis:
+    lettuce:
+      pool:
+        max-active: 200
+        max-idle: 50
+        max-wait: 4s
+    timeout: 10s
+    cluster:
+      nodes:
+        - broker-api-redis:6379
+
+logging:
+  config: classpath:logback.xml
+
+grpc:
+  client-worker-count: 200
+  
+
+broker:
+  proxy: false
+  grpc-client:
+    stub-deadline: 10000
+    channel-info:
+      - channel-name: 'bhSubServer'
+        host: 'bh-server-sub.bluehelix'
+        port: 7011
+      - channel-name: 'bhServer'
+        host: 'bh-server.bluehelix'
+        port: 7011
+        use-ssl: false
+      - channel-name: 'brokerServer'
+        host: 'broker-server'
+        port: 7023
+        use-ssl: false
+      - channel-name: 'securityServer'
+        host: 'broker-security'
+        port: 7022
+        use-ssl: false
+      - channel-name: 'quoteDataServer'
+        host: 'quote-data-service.exchange'
+        port: 7063
+        useSsl: false
+
